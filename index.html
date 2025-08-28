@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Quantum Circuit Bloch Sphere Visualizer</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>Enhanced Quantum Circuit Bloch Sphere Visualizer</h1>
+            <p class="app-subtitle">Build quantum circuits and explore quantum states with beautiful, interactive Bloch spheres</p>
+            <div class="interaction-mode-selector">
+                <button class="mode-btn active" data-mode="view">View Mode</button>
+                <button class="mode-btn" data-mode="edit">Edit Mode</button>
+                <button class="mode-btn" data-mode="measurement">Measurement Mode</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- Circuit Builder Section -->
+            <div class="circuit-section">
+                <div class="section-header">
+                    <h2>Circuit Builder</h2>
+                    <div class="circuit-controls">
+                        <button class="btn btn--sm btn--secondary" id="reset-circuit">Reset</button>
+                        <select class="form-control" id="example-select" style="width: auto; display: inline-block; margin-left: 8px;">
+                            <option value="">Load Example...</option>
+                            <option value="bell">Bell State</option>
+                            <option value="ghz">GHZ State</option>
+                            <option value="superposition">Superposition</option>
+                            <option value="mixed">Mixed States</option>
+                        </select>
+                        <button class="btn btn--sm btn--primary" id="export-btn">Export</button>
+                    </div>
+                </div>
+
+                <!-- Qubit Controls -->
+                <div class="qubit-controls">
+                    <label class="form-label">Number of Qubits:</label>
+                    <select class="form-control" id="qubit-count" style="width: auto; display: inline-block;">
+                        <option value="2" selected>2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                    <div class="animation-controls">
+                        <label>
+                            <input type="checkbox" id="show-trails" checked> Show Trails
+                        </label>
+                        <label>
+                            <input type="checkbox" id="show-grid" checked> Show Grid
+                        </label>
+                        <label>
+                            <input type="checkbox" id="show-labels" checked> Show Labels
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Gate Palette -->
+                <div class="gate-palette">
+                    <h3>Available Gates</h3>
+                    <div class="gate-grid">
+                        <div class="gate-item" data-gate="H" draggable="true">
+                            <div class="gate-symbol">H</div>
+                            <div class="gate-name">Hadamard</div>
+                        </div>
+                        <div class="gate-item" data-gate="X" draggable="true">
+                            <div class="gate-symbol">X</div>
+                            <div class="gate-name">Pauli-X</div>
+                        </div>
+                        <div class="gate-item" data-gate="Y" draggable="true">
+                            <div class="gate-symbol">Y</div>
+                            <div class="gate-name">Pauli-Y</div>
+                        </div>
+                        <div class="gate-item" data-gate="Z" draggable="true">
+                            <div class="gate-symbol">Z</div>
+                            <div class="gate-name">Pauli-Z</div>
+                        </div>
+                        <div class="gate-item" data-gate="S" draggable="true">
+                            <div class="gate-symbol">S</div>
+                            <div class="gate-name">S Gate</div>
+                        </div>
+                        <div class="gate-item" data-gate="T" draggable="true">
+                            <div class="gate-symbol">T</div>
+                            <div class="gate-name">T Gate</div>
+                        </div>
+                        <div class="gate-item" data-gate="CNOT" draggable="true">
+                            <div class="gate-symbol">⊕</div>
+                            <div class="gate-name">CNOT</div>
+                        </div>
+                        <div class="gate-item" data-gate="CZ" draggable="true">
+                            <div class="gate-symbol">CZ</div>
+                            <div class="gate-name">Controlled-Z</div>
+                        </div>
+                        <div class="gate-item" data-gate="RX" draggable="true">
+                            <div class="gate-symbol">RX</div>
+                            <div class="gate-name">Rotation-X</div>
+                        </div>
+                        <div class="gate-item" data-gate="RY" draggable="true">
+                            <div class="gate-symbol">RY</div>
+                            <div class="gate-name">Rotation-Y</div>
+                        </div>
+                        <div class="gate-item" data-gate="RZ" draggable="true">
+                            <div class="gate-symbol">RZ</div>
+                            <div class="gate-name">Rotation-Z</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Circuit Canvas -->
+                <div class="circuit-canvas-container">
+                    <h3>Circuit Diagram</h3>
+                    <div class="circuit-canvas" id="circuit-canvas">
+                        <!-- Circuit will be generated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visualization Section -->
+            <div class="visualization-section">
+                <div class="viz-tabs">
+                    <button class="tab-button active" data-tab="bloch">Enhanced Bloch Spheres</button>
+                    <button class="tab-button" data-tab="states">Quantum States</button>
+                    <button class="tab-button" data-tab="matrices">Density Matrices</button>
+                    <button class="tab-button" data-tab="info">Educational Info</button>
+                </div>
+
+                <!-- Enhanced Bloch Spheres Tab -->
+                <div class="tab-content active" id="bloch-tab">
+                    <div class="bloch-spheres-container" id="bloch-container">
+                        <!-- Enhanced Bloch spheres will be rendered here -->
+                    </div>
+                    <div class="bloch-info-panel">
+                        <div class="info-section">
+                            <h4>Quantum State Information</h4>
+                            <div id="state-info" class="state-info-display">
+                                <!-- State information will be displayed here -->
+                            </div>
+                        </div>
+                        <div class="info-section">
+                            <h4>Bloch Vector Coordinates</h4>
+                            <div id="bloch-coords" class="coords-display">
+                                <!-- Coordinates will be displayed here -->
+                            </div>
+                        </div>
+                        <div class="info-section">
+                            <h4>Measurement Probabilities</h4>
+                            <div id="measurement-probs" class="measurement-display">
+                                <!-- Measurement probabilities will be displayed here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quantum States Tab -->
+                <div class="tab-content" id="states-tab">
+                    <div class="state-display">
+                        <h4>Final State Vector</h4>
+                        <div id="state-vector" class="math-display">
+                            <!-- State vector will be displayed here -->
+                        </div>
+                        <h4>State Probabilities</h4>
+                        <div id="state-probs" class="probability-display">
+                            <!-- Probabilities will be displayed here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Density Matrices Tab -->
+                <div class="tab-content" id="matrices-tab">
+                    <div class="matrices-display">
+                        <h4>Full Density Matrix</h4>
+                        <div id="full-density" class="math-display">
+                            <!-- Full density matrix -->
+                        </div>
+                        <h4>Reduced Density Matrices</h4>
+                        <div id="reduced-densities" class="reduced-matrices">
+                            <!-- Reduced density matrices -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Educational Info Tab -->
+                <div class="tab-content" id="info-tab">
+                    <div class="educational-content">
+                        <div class="info-card">
+                            <h4>Understanding the Bloch Sphere</h4>
+                            <p>The Bloch sphere is a geometric representation of qubit states. Pure states lie on the surface, while mixed states are inside the sphere.</p>
+                            <ul>
+                                <li><strong>North Pole (Z+):</strong> |0⟩ state</li>
+                                <li><strong>South Pole (Z-):</strong> |1⟩ state</li>
+                                <li><strong>X-axis:</strong> |+⟩ and |-⟩ superposition states</li>
+                                <li><strong>Y-axis:</strong> |+i⟩ and |-i⟩ phase states</li>
+                            </ul>
+                        </div>
+                        <div class="info-card">
+                            <h4>Measurement Bases</h4>
+                            <div class="measurement-bases">
+                                <div class="basis-item">
+                                    <h5>Computational Basis (Z)</h5>
+                                    <p>Measures along Z-axis: |0⟩ and |1⟩</p>
+                                </div>
+                                <div class="basis-item">
+                                    <h5>Hadamard Basis (X)</h5>
+                                    <p>Measures along X-axis: |+⟩ and |-⟩</p>
+                                </div>
+                                <div class="basis-item">
+                                    <h5>Circular Basis (Y)</h5>
+                                    <p>Measures along Y-axis: |+i⟩ and |-i⟩</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-card">
+                            <h4>Interaction Modes</h4>
+                            <p><strong>View Mode:</strong> Observe quantum state evolution</p>
+                            <p><strong>Edit Mode:</strong> Drag to manually set qubit states</p>
+                            <p><strong>Measurement Mode:</strong> Simulate measurements in different bases</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+       
+        <!-- Gate Parameter Modal -->
+        <div class="modal hidden" id="gate-param-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Gate Parameters</h3>
+                    <button class="modal-close" id="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="gate-angle">Rotation Angle (radians):</label>
+                        <input type="number" class="form-control" id="gate-angle" step="0.1" value="1.57">
+                        <input type="range" id="angle-slider" min="0" max="6.28" step="0.01" value="1.57" class="angle-slider">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Common Values:</label>
+                        <div class="angle-presets">
+                            <button class="btn btn--sm btn--outline" data-angle="1.5708">π/2</button>
+                            <button class="btn btn--sm btn--outline" data-angle="3.1416">π</button>
+                            <button class="btn btn--sm btn--outline" data-angle="0.7854">π/4</button>
+                            <button class="btn btn--sm btn--outline" data-angle="4.7124">3π/2</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn--secondary" id="modal-cancel">Cancel</button>
+                    <button class="btn btn--primary" id="modal-apply">Apply</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tooltip for hover information -->
+        <div class="tooltip hidden" id="hover-tooltip">
+            <div class="tooltip-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configure MathJax
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>
