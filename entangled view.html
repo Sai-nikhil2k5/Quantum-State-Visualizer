@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Multi-Qubit Entanglement Visualizer</title>
+    <link rel="stylesheet" href="ent style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Enhanced Multi-Qubit Entanglement Visualizer</h1>
+            <p>Explore auto-rotating Bloch spheres in immersive 3D space</p>
+        </header>
+        
+        <div class="main-layout">
+            <div class="visualization-container">
+                <div id="threejs-container"></div>
+                <div class="camera-controls">
+                    <button class="btn btn--sm" id="resetCamera">Reset View</button>
+                </div>
+            </div>
+            
+            <div class="control-panel">
+                <div class="card">
+                    <div class="card__header">
+                        <h3>Quantum State Controls</h3>
+                    </div>
+                    <div class="card__body">
+                        <div class="preset-states">
+                            <h4>Preset Entangled States</h4>
+                            <div class="state-buttons">
+                                <button class="btn btn--secondary btn--sm state-btn" data-state="PhiPlus">Bell |Φ+⟩</button>
+                                <button class="btn btn--secondary btn--sm state-btn" data-state="PsiPlus">Bell |Ψ+⟩</button>
+                                <button class="btn btn--secondary btn--sm state-btn" data-state="GHZ">GHZ State</button>
+                                <button class="btn btn--secondary btn--sm state-btn" data-state="W">W State</button>
+                                <button class="btn btn--secondary btn--sm state-btn" data-state="separable">Separable</button>
+                            </div>
+                        </div>
+
+                        <div class="qubit-controls">
+                            <h4>Qubit 1 Controls</h4>
+                            <div class="slider-group">
+                                <label class="form-label">X: <span id="x1-value">0.00</span></label>
+                                <input type="range" class="form-control slider" id="x1-slider" min="-1" max="1" step="0.01" value="0">
+                            </div>
+                            <div class="slider-group">
+                                <label class="form-label">Y: <span id="y1-value">0.00</span></label>
+                                <input type="range" class="form-control slider" id="y1-slider" min="-1" max="1" step="0.01" value="0">
+                            </div>
+                            <div class="slider-group">
+                                <label class="form-label">Z: <span id="z1-value">0.00</span></label>
+                                <input type="range" class="form-control slider" id="z1-slider" min="-1" max="1" step="0.01" value="0">
+                            </div>
+                        </div>
+
+                        <div class="state-info">
+                            <h4>Current State Information</h4>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">State:</span>
+                                    <span id="current-state">Bell |Φ+⟩</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Description:</span>
+                                    <span id="state-description">(|00⟩ + |11⟩)/√2</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Entanglement:</span>
+                                    <span id="entanglement-value">1.00</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Q1 Purity:</span>
+                                    <span id="q1-purity">0.50</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Q2 Purity:</span>
+                                    <span id="q2-purity">0.50</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Q3 Purity:</span>
+                                    <span id="q3-purity">0.50</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card instructions-card">
+                    <div class="card__header">
+                        <h3>Instructions</h3>
+                    </div>
+                    <div class="card__body">
+                        <ul class="instruction-list">
+                            <li>Watch the auto-rotating sky blue Bloch spheres in 3D space</li>
+                            <li>Click and drag to rotate camera 360° around the scene</li>
+                            <li>Scroll to zoom in/out smoothly without fixed pivot points</li>
+                            <li>Click preset states to see entangled configurations</li>
+                            <li>Use sliders to manually adjust Qubit 1's Bloch vector</li>
+                            <li>Observe how entangled qubits respond with animated correlations</li>
+                            <li>Pulsing arrows show entanglement strength between spheres</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="ent.js"></script>
+</body>
+</html>

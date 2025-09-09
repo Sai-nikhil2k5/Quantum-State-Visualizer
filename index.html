@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Circuit Builder & Bloch Sphere Visualizer</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/renderers/CSS2DRenderer.js"></script>
+<script src="app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var entanglementBtn = document.getElementById('entanglementView');
+    if (entanglementBtn) {
+        entanglementBtn.addEventListener('click', function() {
+            window.location.href = 'entangled view.html';
+        });
+    }
+});
+</script>
+
+
+
+</head>
+<body>
+    <div class="app-container">
+        <!-- Circuit Builder Panel -->
+        <div class="circuit-panel">
+            <div class="panel-header">
+                <h2>Quantum Circuit Builder</h2>
+                <div class="circuit-controls">
+                    <label class="form-label">Qubits:</label>
+                    <select id="qubitCount" class="form-control" title="Select number of qubits">
+                        <option value="1"selected>1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Gate Palette -->
+           <!-- Gate Palette -->
+<div class="gate-palette">
+    <h3>Gates</h3>
+
+    <!-- Single Qubit Gates -->
+    <div id="single-gates" class="gate-section">
+        <h4>Single Qubit Gates</h4>
+        <div class="gate-group">
+            <div class="gate-button" data-gate="H" title="Hadamard Gate">H</div>
+            <div class="gate-button" data-gate="X" title="Pauli-X Gate">X</div>
+            <div class="gate-button" data-gate="Y" title="Pauli-Y Gate">Y</div>
+            <div class="gate-button" data-gate="Z" title="Pauli-Z Gate">Z</div>
+            <div class="gate-button" data-gate="S" title="S Gate">S</div>
+            <div class="gate-button" data-gate="T" title="T Gate">T</div>
+        </div>
+    </div>
+
+    <!-- Rotation Gates -->
+    <div id="rotation-gates" class="gate-section">
+        <h4>Rotation Gates</h4>
+        <div class="gate-group">
+            <div class="gate-button" data-gate="RX" title="Rotation X">RX</div>
+            <div class="gate-button" data-gate="RY" title="Rotation Y">RY</div>
+            <div class="gate-button" data-gate="RZ" title="Rotation Z">RZ</div>
+        </div>
+    </div>
+
+    <!-- Two-Qubit Gates -->
+    <div id="two-gates" class="gate-section">
+        <h4>Two-Qubit Gates</h4>
+        <div class="gate-group">
+            <div class="gate-button" data-gate="CNOT" title="CNOT Gate">●⊕</div>
+            
+           
+           
+        </div>
+    </div>
+
+    <!-- Three-Qubit Gates -->
+    <div id="three-gates" class="gate-section">
+        <h4>Three-Qubit Gates</h4>
+        <div class="gate-group">
+            <div class="gate-button" data-gate="CCNOT" title="Toffoli Gate">●⊕●</div>
+            <div class="gate-button" data-gate="CSWAP" title="Fredkin Gate">●X●</div>
+           
+        </div>
+    </div>
+</div>
+
+
+            <!-- Example Circuits -->
+            <div class="example-section">
+                <h3>Example Circuits</h3>
+                <label for="exampleCircuit" class="form-label">Example Circuits:</label>
+                <select id="exampleCircuit" class="form-control" title="Select an example circuit">
+                    <option value="">Select Example...</option>
+                    <option value="bell">Bell State</option>
+                    <option value="ghz">GHZ State</option>
+                    <option value="superposition">Superposition</option>
+                    <option value="mixed">Mixed State</option>
+                </select>
+            </div>
+
+            <!-- Circuit Canvas -->
+            <div class="circuit-container">
+                <div id="circuitCanvas" class="circuit-canvas"></div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button id="resetCircuit" class="btn btn--secondary">Reset</button>
+                <button id="exportCircuit" class="btn btn--primary">Export</button>
+            </div>
+        </div>
+<div class="resizer"></div>  
+        <!-- Visualization Panel -->
+        <div class="visualization-panel">
+            <div class="panel-header">
+                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <h2 style="margin: 0;">Quantum State Visualization</h2>
+                    <button id="entanglementView" class="toggle-btn">Entanglement View</button>
+                </div>
+            </div>
+
+            <!-- Visualization Controls -->
+            
+            <!-- Tabs -->
+            <div class="tab-container">
+                <div class="tab-nav">
+                    <button class="tab-button active" data-tab="bloch">Bloch Spheres</button>
+                    <button class="tab-button" data-tab="states">States</button>
+                    <button class="tab-button" data-tab="matrices">Matrices</button>
+                    <button class="tab-button" data-tab="info">Info</button>
+                </div>
+
+                <!-- Bloch Spheres Tab -->
+                <div id="blochTab" class="tab-content active">
+                    <div>
+                        <button id="toggle-rotation" class="toggle-btn">Start Rotation</button>
+                    </div>
+                    <div id="blochContainer" class="bloch-container"></div>
+                </div>
+
+                <!-- States Tab -->
+                <div id="statesTab" class="tab-content">
+                    <div class="states-display">
+                        <h3>Quantum State Vector</h3>
+                        <div id="stateVector" class="state-vector"></div>
+                        <h3>Measurement Probabilities</h3>
+                        <div id="probabilities" class="probabilities"></div>
+                    </div>
+                </div>
+
+                <!-- Matrices Tab -->
+                <div id="matricesTab" class="tab-content">
+                    <div class="matrices-display">
+                        <h3>Density Matrix</h3>
+                        <div id="densityMatrix" class="matrix-display"></div>
+                        <h3>Reduced Density Matrices</h3>
+                        <div id="reducedMatrices" class="matrix-display"></div>
+                    </div>
+                </div>
+
+                <!-- Info Tab -->
+                <div id="infoTab" class="tab-content">
+                    <div class="info-content">
+                        <h3>About Bloch Spheres</h3>
+                        <p>The Bloch sphere is a geometric representation of the pure state space of a two-level quantum mechanical system (qubit).</p>
+                        
+                        <h4>Key Features:</h4>
+                        <ul>
+                            <li><strong>Axes:</strong> X (red), Y (green), Z (blue)</li>
+                            <li><strong>States:</strong> |0⟩ at north pole, |1⟩ at south pole</li>
+                            <li><strong>Arrow:</strong> Yellow arrow shows current qubit state</li>
+                            <li><strong>Trails:</strong> Show evolution path of quantum states</li>
+                        </ul>
+
+                        <h4>Measurement Bases:</h4>
+                        <ul>
+                            <li><strong>Z-basis:</strong> {|0⟩, |1⟩} computational basis</li>
+                            <li><strong>X-basis:</strong> {|+⟩, |−⟩} superposition basis</li>
+                            <li><strong>Y-basis:</strong> {|+i⟩, |−i⟩} circular basis</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Parameter Input Modal -->
+    <div id="parameterModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Set Gate Parameter</h3>
+                <button id="modalClose" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label class="form-label">Angle (radians):</label>
+                <input type="range" id="angleSlider" min="0" max="6.28318" step="0.01" value="1.5708" class="slider" title="Set angle in radians" placeholder="Angle in radians">
+                <input type="number" id="angleInput" min="0" max="6.28318" step="0.01" value="1.5708" class="form-control" title="Enter angle in radians" placeholder="Angle in radians">
+                <div class="angle-presets">
+                    <button class="btn btn--sm btn--outline" data-angle="0">0</button>
+                    <button class="btn btn--sm btn--outline" data-angle="1.5708">π/2</button>
+                    <button class="btn btn--sm btn--outline" data-angle="3.14159">π</button>
+                    <button class="btn btn--sm btn--outline" data-angle="4.71239">3π/2</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="modalCancel" class="btn btn--secondary">Cancel</button>
+                <button id="modalApply" class="btn btn--primary">Apply</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
