@@ -1,1 +1,1 @@
-# Quantum-State-Visualizer-
+# Qubit-Visualizer
